@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prism — Turn one idea into 5 posts that sell</title>
+
+<!-- Google Fonts: Fraunces (display/headline), Inter (body), IBM Plex Mono (output/data) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — edit these to reskin the whole page.
+     Each platform keeps its own accent color (--x, --linkedin, etc.)
+     used across icons, card borders/titles, and the hero beams.
+  ============================================================ */
+  :root{
+    --bg:#0c0d16;
+    --bg-2:#151726;
+    --bg-3:#1c1f33;
+    --paper:#f3f3fa;
+    --mist:#9092ad;
+    --line:rgba(255,255,255,0.08);
+
+    --x:#5dd5ff;
+    --linkedin:#7c8cff;
+    --ig-1:#ff5d8f;
+    --video:#ffd23f;
+    --news:#43e6b5;
+
+    --serif:'Fraunces', serif;
+    --sans:'Inter', sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg); color:var(--paper); font-family:var(--sans);
+    min-height:100vh; overflow-x:hidden;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+  section{position:relative; z-index:1;}
+
+  /* ============================================================
+     FADE-IN ANIMATION (used by cards + sections as they appear)
+  ============================================================ */
+  @keyframes fadeInUp{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .fade-in{ animation:fadeInUp .5s ease both; }
+
+  /* ============================================================
+     HEADER
+  ============================================================ */
+  header{padding:26px 24px; display:flex; align-items:center; justify-content:space-between; max-width:1080px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:700; font-size:1.2rem;}
+  .brand svg{flex-shrink:0;}
+  .tag{font-family:var(--mono); font-size:.7rem; color:var(--mist); letter-spacing:.05em; text-transform:uppercase;}
+
+  /* ============================================================
+     HERO
+  ============================================================ */
+  .hero{padding:56px 24px 10px; max-width:820px; margin:0 auto; text-align:center;}
+  .hero h1{
+    font-family:var(--serif); font-weight:800; font-size:clamp(2.1rem, 5vw, 3.4rem);
+    line-height:1.08; letter-spacing:-0.015em;
+  }
+  .hero p.sub{
+    margin:20px auto 0; color:var(--mist); font-size:1.06rem; max-width:56ch; line-height:1.6;
+  }
+  .hero-cta{margin-top:34px; display:flex; justify-content:center;}
+  .btn-hero{
+    font-family:var(--sans); font-weight:700; font-size:1rem; text-decoration:none;
+    background:linear-gradient(90deg, var(--x), var(--linkedin), var(--ig-1), var(--video), var(--news));
+    color:var(--bg); padding:17px 32px; border-radius:12px; display:inline-block;
+    transition:transform .15s ease, box-shadow .15s ease; box-shadow:0 10px 30px rgba(93,213,255,.18);
+    border:none; cursor:pointer;
+  }
+  .btn-hero:hover{transform:translateY(-3px); box-shadow:0 16px 40px rgba(255,93,143,.22);}
+
+  /* ============================================================
+     PRISM VISUAL — white beam entering, five colored beams exiting
+  ============================================================ */
+  .prism-visual{max-width:880px; margin:56px auto 10px; padding:0 24px;}
+  .prism-visual svg{width:100%; height:auto; display:block;}
+  .beam-label{
+    font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; fill:var(--mist);
+  }
+
+  /* ============================================================
+     BENEFITS
+  ============================================================ */
+  .benefits{padding:70px 24px 20px; max-width:1000px; margin:0 auto;}
+  .benefits-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px;
+  }
+  .benefit{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:14px; padding:24px 20px;
+  }
+  .benefit .b-icon{
+    width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.04); margin-bottom:14px;
+  }
+  .benefit h3{font-family:var(--sans); font-weight:700; font-size:1rem; margin-bottom:6px;}
+  .benefit p{color:var(--mist); font-size:.86rem; line-height:1.5;}
+
+  /* ============================================================
+     TOOL SECTION
+  ============================================================ */
+  .studio-head{max-width:680px; margin:80px auto 24px; padding:0 24px; text-align:center;}
+  .studio-head h2{font-family:var(--serif); font-weight:700; font-size:clamp(1.5rem,3vw,2rem);}
+  .studio-head p{color:var(--mist); margin-top:10px; font-size:.95rem;}
+
+  .studio{max-width:780px; margin:0 auto 20px; padding:0 24px;}
+
+  /* Tone selector — picks which phrasing/CTA variant pool feeds the randomizer */
+  .tone-row{display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap;}
+  .tone-label{font-family:var(--mono); font-size:.72rem; color:var(--mist); margin-right:2px;}
+  .tone-btn{
+    font-family:var(--sans); font-size:.8rem; font-weight:600; color:var(--mist);
+    background:var(--bg-2); border:1px solid var(--line); border-radius:8px;
+    padding:7px 14px; cursor:pointer; transition:.15s;
+  }
+  .tone-btn:hover{color:var(--paper);}
+  .tone-btn.active{background:var(--paper); color:var(--bg); border-color:var(--paper);}
+
+  .idea-group{margin-bottom:36px;}
+  .idea-group-title{
+    font-family:var(--mono); font-size:.74rem; color:var(--mist); text-transform:uppercase;
+    letter-spacing:.05em; margin-bottom:12px; padding-left:2px;
+  }
+  .input-box{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:14px; padding:6px;
+  }
+  textarea{
+    width:100%; min-height:150px; background:transparent; border:none; color:var(--paper);
+    font-family:var(--sans); font-size:.98rem; line-height:1.6; padding:16px 18px; resize:vertical;
+  }
+  textarea:focus{outline:none;}
+  textarea::placeholder{color:var(--mist);}
+  .input-foot{
+    display:flex; justify-content:space-between; align-items:center; padding:8px 14px 10px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .hint{font-family:var(--mono); font-size:.72rem; color:var(--mist);}
+  .split-btn{
+    font-family:var(--sans); font-weight:700; font-size:.92rem;
+    background:var(--paper); color:var(--bg); border:none; border-radius:9px;
+    padding:12px 22px; cursor:pointer; transition:transform .15s ease;
+  }
+  .split-btn:hover{transform:translateY(-2px);}
+  .split-btn:active{transform:translateY(0);}
+  .split-btn:disabled{opacity:.6; cursor:wait; transform:none;}
+
+  .prism-divider{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin:30px auto; max-width:780px; padding:0 24px;
+  }
+  .prism-divider .beam{flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--line));}
+  .prism-divider .beam.right{background:linear-gradient(90deg, var(--line), transparent);}
+
+  /* ============================================================
+     RESULT CARDS
+  ============================================================ */
+  #results{max-width:1080px; margin:0 auto; padding:0 24px 30px; display:none;}
+  .results-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;
+  }
+  .card{
+    background:var(--bg-2); border:1px solid var(--line); border-left:3px solid var(--card-color, var(--x));
+    border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:12px;
+  }
+  .card-head{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .card-head-left{display:flex; align-items:center; gap:8px;}
+  .card-title{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--card-color, var(--x)); font-weight:600;
+  }
+  .copy-btn{
+    font-family:var(--mono); font-size:.7rem; background:rgba(255,255,255,0.04);
+    border:1px solid var(--line); color:var(--mist); padding:6px 10px; border-radius:6px; cursor:pointer;
+    transition:.15s;
+  }
+  .copy-btn:hover{color:var(--paper); border-color:rgba(255,255,255,0.2);}
+  .card-body{
+    font-family:var(--mono); font-size:.82rem; line-height:1.65; white-space:pre-wrap; color:var(--paper);
+    max-height:280px; overflow-y:auto;
+  }
+  .card-body::-webkit-scrollbar{width:4px;}
+  .card-body::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+
+  /* ============================================================
+     LOCKED CARDS — free demo shows 2 formats in full; the rest
+     are blurred with an "unlock" overlay driving to purchase.
+  ============================================================ */
+  .card.locked{ position:relative; }
+  .card.locked .card-body{
+    filter:blur(4px); user-select:none; pointer-events:none; max-height:120px;
+  }
+  .card.locked .copy-btn{ display:none; }
+  .lock-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; padding:16px; text-align:center; background:rgba(12,13,22,0.55); border-radius:12px;
+  }
+  .lock-overlay svg{ opacity:.9; }
+  .lock-overlay span{ font-family:var(--mono); font-size:.74rem; color:var(--paper); max-width:22ch; line-height:1.4; }
+  .unlock-btn{
+    font-family:var(--sans); font-weight:700; font-size:.76rem; text-decoration:none;
+    background:var(--paper); color:var(--bg); padding:9px 16px; border-radius:8px;
+    transition:transform .15s ease;
+  }
+  .unlock-btn:hover{ transform:translateY(-2px); }
+
+  /* ============================================================
+     FINAL OFFER (AppSumo Lifetime Deal)
+  ============================================================ */
+  .offer{max-width:780px; margin:90px auto 90px; padding:0 24px; text-align:center;}
+  .offer-card{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:20px;
+    padding:48px 32px; position:relative; overflow:hidden;
+  }
+  .offer-card::before{
+    content:''; position:absolute; top:-50%; left:-10%; width:70%; height:200%;
+    background:linear-gradient(180deg, var(--video), transparent 70%);
+    opacity:.07; transform:rotate(-15deg);
+  }
+  .offer-eyebrow{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--video); margin-bottom:14px;
+  }
+  .offer-card h2{font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,3.4vw,2.3rem); line-height:1.2;}
+  .price-row{display:flex; align-items:baseline; justify-content:center; gap:10px; margin:22px 0 8px;}
+  .price{font-family:var(--serif); font-size:2.6rem; font-weight:800;}
+  .price-note{color:var(--mist); font-size:.95rem;}
+  .cta-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:24px;}
+  .buy-btn{
+    font-family:var(--sans); font-weight:700; font-size:.95rem; text-decoration:none;
+    padding:15px 28px; border-radius:11px; display:inline-block; transition:transform .15s ease;
+  }
+  .buy-btn:hover{transform:translateY(-2px);}
+  .buy-btn.primary{background:var(--paper); color:var(--bg);}
+  .buy-btn.secondary{background:transparent; color:var(--paper); border:1px solid var(--line);}
+  .guarantee{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-top:22px; font-family:var(--mono); font-size:.76rem; color:var(--mist);
+  }
+
+  footer{text-align:center; padding:34px 24px; font-family:var(--mono); font-size:.72rem; color:var(--mist);}
+
+  @media (max-width:640px){
+    .hero{padding-top:38px;}
+    .results-grid{grid-template-columns:1fr;}
+    .offer-card{padding:34px 22px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header>
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L4 8L12 14L20 8L12 2Z" stroke="#ffd23f" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M4 8L4 16L11 21" stroke="#5dd5ff" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M20 8L20 16L13 21" stroke="#ff5d8f" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    Prism
+  </div>
+  <div class="tag">one idea → five posts</div>
+</header>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero fade-in">
+  <h1>Turn one idea into 5 posts that sell.</h1>
+  <p class="sub">Prism is the ultimate shortcut for creators and social media managers: in seconds, your idea becomes ready-to-publish content for X, LinkedIn, Instagram, Newsletter, and Video. No generic AI. No fluff. Just results.</p>
+  <div class="hero-cta">
+    <a href="#studio" class="btn-hero">Start using Prism</a>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRISM VISUAL — a white beam enters, five colored beams exit
+============================================================ -->
+<div class="prism-visual fade-in">
+  <svg viewBox="0 0 880 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- incoming white beam -->
+    <line x1="20" y1="130" x2="330" y2="130" stroke="#f3f3fa" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round" opacity="0.7"/>
+    <!-- the prism triangle -->
+    <path d="M330 70 L400 130 L330 190 Z" fill="url(#prismGrad)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+    <defs>
+      <linearGradient id="prismGrad" x1="330" y1="70" x2="400" y2="190" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffffff" stop-opacity="0.10"/>
+        <stop offset="1" stop-color="#ffffff" stop-opacity="0.02"/>
+      </linearGradient>
+    </defs>
+    <!-- five refracted beams, one per platform color -->
+    <line x1="400" y1="130" x2="820" y2="34"  stroke="#5dd5ff" stroke-width="2" stroke-linecap="round"/>
+    <line x1="400" y1="130" x2="820" y2="82"  stroke="#7c8cff" stroke-width="2" stroke-linecap="round"/>
+    <line x1="400" y1="130" x2="820" y2="130" stroke="#ff5d8f" stroke-width="2" stroke-linecap="round"/>
+    <line x1="400" y1="130" x2="820" y2="178" stroke="#ffd23f" stroke-width="2" stroke-linecap="round"/>
+    <line x1="400" y1="130" x2="820" y2="226" stroke="#43e6b5" stroke-width="2" stroke-linecap="round"/>
+
+    <text x="828" y="38"  class="beam-label">X / Twitter</text>
+    <text x="828" y="86"  class="beam-label">LinkedIn</text>
+    <text x="828" y="134" class="beam-label">Instagram</text>
+    <text x="828" y="182" class="beam-label">Video</text>
+    <text x="828" y="230" class="beam-label">Newsletter</text>
+  </svg>
+</div>
+
+<!-- ============================================================
+     BENEFITS
+============================================================ -->
+<section class="benefits fade-in">
+  <div class="benefits-grid">
+    <div class="benefit">
+      <div class="b-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5dd5ff" stroke-width="1.8"><path d="M12 6v6l4 2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9"/></svg>
+      </div>
+      <h3>Brutal time savings</h3>
+      <p>What used to take an hour of rewriting now takes seconds — paste once, get five formats.</p>
+    </div>
+    <div class="benefit">
+      <div class="b-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c8cff" stroke-width="1.8"><path d="M4 12h16M4 6h16M4 18h10" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Consistency that engages</h3>
+      <p>Every format follows a proven structure — hook, body, CTA — so your posting stays sharp every time.</p>
+    </div>
+    <div class="benefit">
+      <div class="b-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff5d8f" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>
+      </div>
+      <h3>Minimalist interface</h3>
+      <p>One input, one button, five results. No onboarding, no clutter, no learning curve.</p>
+    </div>
+    <div class="benefit">
+      <div class="b-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffd23f" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>Scale without a team</h3>
+      <p>Publish across five channels as a team of one — no ghostwriter, no agency retainer.</p>
+    </div>
+    <div class="benefit">
+      <div class="b-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#43e6b5" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Total control</h3>
+      <p>Every output is plain text you can tweak — nothing locked behind a black-box AI writer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOOL SECTION
+============================================================ -->
+<div class="studio-head fade-in">
+  <h2>Try it — paste your idea below</h2>
+  <p>Free to test. No signup needed.</p>
+</div>
+
+<div class="studio" id="studio">
+  <div class="tone-row">
+    <span class="tone-label">Tone:</span>
+    <button class="tone-btn active" data-tone="professional" onclick="setTone(this)">Professional</button>
+    <button class="tone-btn" data-tone="casual" onclick="setTone(this)">Casual</button>
+    <button class="tone-btn" data-tone="funny" onclick="setTone(this)">Funny</button>
+  </div>
+  <div class="input-box">
+    <textarea id="inputText" placeholder="Paste one or more ideas — separate different ideas with a BLANK LINE.&#10;&#10;Most people overthink their pricing.&#10;Charge based on outcome, not hours.&#10;Ask what the result is worth to the client.&#10;&#10;Consistency beats intensity.&#10;Small daily reps compound faster than occasional bursts."></textarea>
+    <div class="input-foot">
+      <span class="hint">one line per point · blank line = new idea</span>
+      <button class="split-btn" onclick="splitContent()">Split into 5 formats</button>
+    </div>
+  </div>
+</div>
+
+<div class="prism-divider" id="divider" style="display:none;">
+  <div class="beam"></div>
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 8L12 14L20 8L12 2Z" stroke="#9092ad" stroke-width="1.4"/></svg>
+  <div class="beam right"></div>
+</div>
+
+<div id="results">
+  <div class="results-grid" id="resultsGrid"></div>
+</div>
+
+<!-- ============================================================
+     WELCOME BACK — replaces the sales offer in the full version,
+     since the person opening this file already paid.
+============================================================ -->
+<section class="offer fade-in">
+  <div class="offer-card">
+    <div class="offer-eyebrow">Full version — thanks for your purchase</div>
+    <h2>All 5 formats unlocked. Use it as much as you want.</h2>
+    <p style="color:var(--mist); margin-top:14px; font-size:.95rem;">
+      Bookmark this page — it's yours for good. Questions or feedback? Reply to your Gumroad receipt email.
+    </p>
+  </div>
+</section>
+
+<footer>Prism — built for creators and social media managers who publish everywhere, once.</footer>
+
+<script>
+
+/* ============================================================
+   TONE SELECTOR (unchanged UI — still 3 buttons)
+============================================================ */
+let currentTone = 'professional';
+function setTone(btn) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTone = btn.dataset.tone;
+}
+
+function truncate(str, max) {
+  return str.length > max ? str.slice(0, max - 1).trim() + '\u2026' : str;
+}
+
+/* ============================================================
+   Split raw textarea input into idea blocks (blank line = new idea).
+   Each block is sent as one request to the backend.
+============================================================ */
+function extractIdeaBlocks(raw) {
+  const blocks = raw.split(/\n\s*\n+/).map(b => b.trim()).filter(Boolean);
+  return blocks;
+}
+
+const ICONS = {
+  twitter: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l16 16M20 4L4 20" stroke-linecap="round"/></svg>`,
+  linkedin: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 11v5M8 8v.01M12 16v-3a2 2 0 0 1 4 0v3M12 13v3" stroke-linecap="round"/></svg>`,
+  instagram: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="12" r="3.2"/><circle cx="16.2" cy="7.8" r=".6" fill="currentColor" stroke="none"/></svg>`,
+  video: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="12" height="12" rx="2"/><path d="M16 10l4-2v8l-4-2" stroke-linejoin="round"/></svg>`,
+  newsletter: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linejoin="round"/></svg>`
+};
+const PLATFORM_META = {
+  twitter:    { title: 'X / Twitter thread',       color: 'var(--x)' },
+  linkedin:   { title: 'LinkedIn post',             color: 'var(--linkedin)' },
+  instagram:  { title: 'Instagram caption',         color: 'var(--ig-1)' },
+  video:      { title: 'Short-form video script',   color: 'var(--video)' },
+  newsletter: { title: 'Newsletter blurb',           color: 'var(--news)' }
+};
+
+/* ============================================================
+   LOCAL MOCK FALLBACK
+   Used only when the real backend isn't reachable — typically
+   during local testing without `vercel dev` running (the fetch
+   to /api/generate comes back 404), or when the
+   file is opened directly (file://), which fails the fetch outright.
+   This keeps the UI fully testable without needing the Vercel CLI
+   or a deployed site. It reuses a lightweight template+randomization
+   engine (no AI, no API cost) — NOT the real AI output.
+============================================================ */
+let usedMockFallback = false;
+
+const MOCK_TONE = {
+  professional: {
+    open: ["Here's something worth thinking through:", 'A pattern I keep seeing:', 'Quick insight worth sharing:'],
+    close: ['Feedback welcome.', 'Curious how this lines up with your experience.', 'Worth discussing further.'],
+    bullets: ['→', '—', '•']
+  },
+  casual: {
+    open: ['ok real talk —', 'not gonna lie,', 'quick thought i had:'],
+    close: ['lmk what you think', 'hope this helps someone', 'curious if this resonates'],
+    bullets: ['✦', '👉', '-']
+  },
+  funny: {
+    open: ['plot twist:', 'unpopular opinion (kind of):', 'nobody asked but here we go:'],
+    close: ['that\'s the tea ☕', 'and scene.', 'you\'re welcome'],
+    bullets: ['🔥', '👀', '✨']
+  }
+};
+
+function mockPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function mockShuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function mockExtractPoints(text) {
+  let lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length <= 1 && text.trim()) {
+    lines = text.split(/(?<=[.!?])\s+/).map(l => l.trim()).filter(Boolean);
+  }
+  return lines;
+}
+
+function mockGenerate(ideaText, tone) {
+  const t = MOCK_TONE[tone] || MOCK_TONE.professional;
+  const points = mockExtractPoints(ideaText);
+  const hook = points[0] || ideaText.trim();
+  const rest = mockShuffle(points.slice(1, 6));
+  const effectivePoints = rest.length > 0 ? rest : points.slice(0, 5);
+  const bullet = mockPick(t.bullets);
+
+  const twitter = [`🧵 ${mockPick(t.open)} ${hook}`, ...effectivePoints.map((p, i) => `${i + 1}. ${p}`), mockPick(t.close)].join('\n\n');
+  const linkedin = `${hook}\n\n${effectivePoints.map(p => `${bullet} ${p}`).join('\n')}\n\n${mockPick(t.close)}`;
+  const instagram = `${hook} ✨\n\n${effectivePoints.map(p => `${bullet} ${p}`).join('\n')}\n\nSave this for later 📌\n\n.\n.\n.\n(swap in 3-5 niche hashtags here)`;
+  const video = `HOOK (0–3s)\n"${hook}"\n\n${effectivePoints.slice(0, 4).map((p, i) => `BEAT ${i + 1}\n${p}`).join('\n\n')}\n\nCTA (last 3s)\n"Follow for more like this."`;
+  const newsletter = `Subject line: "${hook.slice(0, 60)}"\n\nIn this issue: ${hook}\n\nHere's what stood out:\n${effectivePoints.map(p => `• ${p}`).join('\n')}\n\n${mockPick(t.close)} [your link]`;
+
+  return { twitter, linkedin, instagram, video, newsletter };
+}
+
+/* ============================================================
+   Calls the secure backend (api/generate.js) for
+   ONE idea. The OpenAI key never touches the browser — this fetch
+   only works once the site is actually deployed on Vercel (or
+   running locally via `vercel dev`).
+
+   FALLBACK: if the function isn't reachable (404 — most likely
+   testing locally without the Vercel CLI — or the fetch throws
+   outright, e.g. opening the file directly), fall back to the
+   local mock generator so the UI stays testable end to end.
+============================================================ */
+let lastFallbackReason = '';
+
+async function generateForIdea(ideaText) {
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: ideaText, tone: currentTone })
+    });
+
+    if (res.status === 404) {
+      lastFallbackReason = 'Got HTTP 404 from /api/generate (function not found at that route).';
+      console.warn('[Prism]', lastFallbackReason);
+      usedMockFallback = true;
+      return mockGenerate(ideaText, currentTone);
+    }
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody.error || `Request failed (${res.status})`);
+    }
+    return res.json(); // { twitter, linkedin, instagram, video, newsletter }
+  } catch (err) {
+    // Network-level failure — e.g. the file was opened directly (file://)
+    // and there's no server at all to answer the fetch.
+    if (err instanceof TypeError) {
+      lastFallbackReason = `fetch() threw a TypeError: "${err.message}" (network-level failure — blocked request, CORS, or no connection).`;
+      console.warn('[Prism]', lastFallbackReason);
+      usedMockFallback = true;
+      return mockGenerate(ideaText, currentTone);
+    }
+    throw err;
+  }
+}
+
+/* ============================================================
+   Main handler — one backend call per idea block, rendered as
+   labeled groups of 5 cards each.
+============================================================ */
+async function splitContent() {
+  const raw = document.getElementById('inputText').value;
+  const ideaBlocks = extractIdeaBlocks(raw);
+  if (ideaBlocks.length === 0) return;
+
+  usedMockFallback = false; // reset each run — set to true inside generateForIdea if it falls back
+
+  const btn = document.querySelector('.split-btn');
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Generating\u2026';
+  btn.disabled = true;
+
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = '';
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('divider').style.display = 'flex';
+
+  try {
+    // Sequential (not parallel) on purpose: keeps costs/rate predictable
+    // and avoids hitting API rate limits when someone pastes many ideas.
+    for (let ideaIdx = 0; ideaIdx < ideaBlocks.length; ideaIdx++) {
+      const ideaText = ideaBlocks[ideaIdx];
+      let result;
+      try {
+        result = await generateForIdea(ideaText);
+      } catch (err) {
+        const errBox = document.createElement('div');
+        errBox.className = 'idea-group-title';
+        errBox.style.color = '#ff4d5e';
+        errBox.textContent = `Idea ${ideaIdx + 1}: generation failed (${err.message}). Try again.`;
+        grid.appendChild(errBox);
+        continue;
+      }
+
+      const group = document.createElement('div');
+      group.className = 'idea-group';
+      if (ideaBlocks.length > 1) {
+        const label = document.createElement('div');
+        label.className = 'idea-group-title fade-in';
+        label.textContent = `Idea ${ideaIdx + 1} \u2014 ${truncate(ideaText.split('\n')[0], 70)}`;
+        group.appendChild(label);
+      }
+
+      const row = document.createElement('div');
+      row.className = 'results-grid';
+
+      Object.keys(PLATFORM_META).forEach((key, i) => {
+        const meta = PLATFORM_META[key];
+        const body = result[key] || '(no content returned)';
+        const card = document.createElement('div');
+        card.className = 'card fade-in';
+        card.style.setProperty('--card-color', meta.color);
+        card.style.animationDelay = `${i * 0.06}s`;
+        card.innerHTML = `
+          <div class="card-head">
+            <div class="card-head-left" style="color:${meta.color}">
+              ${ICONS[key]}
+              <span class="card-title">${meta.title}</span>
+            </div>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="card-body">${body}</div>
+        `;
+        card.querySelector('.copy-btn').addEventListener('click', (e) => {
+          navigator.clipboard.writeText(body).then(() => {
+            e.target.textContent = 'Copied!';
+            setTimeout(() => e.target.textContent = 'Copy', 1500);
+          });
+        });
+        row.appendChild(card);
+      });
+
+      group.appendChild(row);
+      grid.appendChild(group);
+    }
+  } finally {
+    btn.textContent = originalLabel;
+    btn.disabled = false;
+  }
+
+  if (usedMockFallback) {
+    const notice = document.createElement('div');
+    notice.style.cssText = 'max-width:1080px; margin:0 auto 20px; padding:0 24px;';
+    notice.innerHTML = `<div style="font-family:var(--mono); font-size:.76rem; color:#ffb648; background:rgba(255,182,72,0.08); border:1px solid rgba(255,182,72,0.3); border-radius:10px; padding:12px 16px;">⚠ Preview mode: the live backend wasn't reachable, so this used local mock data instead of real AI generation.<br><br><b>Reason:</b> ${lastFallbackReason || 'unknown'}</div>`;
+    document.getElementById('resultsGrid').before(notice);
+  }
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+</body>
+</html>
